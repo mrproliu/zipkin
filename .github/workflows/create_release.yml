@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04  # newest available distribution, aka focal
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
       - name: Create Release
         run: |  # GITHUB_REF will be refs/tags/release-MAJOR.MINOR.PATCH
 #          build-bin/git/login_git &&
