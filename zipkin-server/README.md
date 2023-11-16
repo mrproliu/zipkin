@@ -127,13 +127,13 @@ Here are the top-level key configuration of Zipkin:
 * `ZIPKIN_CORE_RECORD_DATA_TTL`: How long to keep tracing data, in days; Defaults to 7 days
 * `ZIPKIN_CORE_METRICS_DATA_TTL`: How long to keep metrics data(such as service names, span names), in days; Defaults to 7 days
 * `ZIPKIN_SEARCHABLE_TAG_KEYS`: Defines a set of span tag keys which are searchable. Defaults to `http.method`
-* `ZIPKIN_SAMPLE_RATE`: The trace sample rate precision is 0.0001, should be between 0 and 1. Defaults to 1
-* `ZIPKIN_SERVER_PORT`: Listen HTTP, gRPC port for HTTP API, web UI, etc. Defaults to 9411
-* `ZIPKIN_SEARCH_ENABLED`: `false` disables searching in the query API and any indexing or post-processing
+* `ZIPKIN_SAMPLE_RATE` or `COLLECTOR_SAMPLE_RATE`: The trace sample rate precision is 0.0001, should be between 0 and 1. Defaults to 1
+* `ZIPKIN_SERVER_PORT` or `QUERY_PORT`: Listen HTTP, gRPC port for HTTP API, web UI, etc. Defaults to 9411
+* `ZIPKIN_SEARCH_ENABLED` or `SEARCH_ENABLED`: `false` disables searching in the query API and any indexing or post-processing
 in the collector to support search. This does not disable the entire UI, as trace by ID and
 dependency queries still operate. Disable this when you use another service (such as logs) to find
 trace IDs. Defaults to true
-* `ZIPKIN_STORAGE`: Storage of the tracing data: one of `elasticsearch`, `h2`, `mysql`, `postgresql`, `banyandb`, `cassandra3`
+* `ZIPKIN_STORAGE` or `STORAGE_TYPE`: Storage of the tracing data: one of `elasticsearch`, `h2`, `mysql`, `postgresql`, `banyandb`, `cassandra3`
 
 ### HTTP Service
 
@@ -144,7 +144,7 @@ The following several HTTP services are available：
 * `ZIPKIN_QUERY_REST_PORT`: Listen HTTP port for HTTP API and web UI to other port, If less than or equal to 0, `ZIPKIN_SERVER_PORT` would be used. Defaults to -1
 * `ZIPKIN_QUERY_NAMES_MAX_AGE`: Controls the value of the `max-age` header zipkin-server responds with on
  http requests for autocompleted values in the UI (service names for example). Defaults to 300 seconds.
-* `ZIPKIN_QUERY_LOOKBACK`: How many milliseconds queries can look back from endTs; Defaults to 24 hours (two daily buckets: one for today and one for yesterday)
+* `ZIPKIN_QUERY_LOOKBACK` or `QUERY_LOOKBACK`: How many milliseconds queries can look back from endTs; Defaults to 24 hours (two daily buckets: one for today and one for yesterday)
 * `ZIPKIN_QUERY_ZIPKIN`: `-` disables the HTTP read endpoints under '/api/v2'. This also disables the
     UI, as it relies on the API. If your only goal is to restrict search, use `ZIPKIN_SEARCH_ENABLED` instead.
     Defaults to `zipkin`
@@ -234,12 +234,12 @@ $ java -Xmx1G -jar zipkin.jar
 Zipkin's Cassandra storage component supports Cassandra 3.11.3+
 and applies when `ZIPKIN_STORAGE` is set to `cassandra3`:
 
-    * `ZIPKIN_STORAGE_CASSANDRA_KEYSPACE`: The keyspace to use. Defaults to "zipkin"
-    * `ZIPKIN_STORAGE_CASSANDRA_CONTACT_POINTS`: Comma separated list of host addresses part of Cassandra cluster. You can also specify a custom port with 'host:port'. Defaults to localhost on port 9042.
-    * `ZIPKIN_STORAGE_CASSANDRA_LOCAL_DC`: Name of the datacenter that will be considered "local" for load balancing. Defaults to "datacenter1"
-    * `ZIPKIN_STORAGE_CASSANDRA_ENSURE_SCHEMA`: Ensuring cassandra has the latest schema. If enabled tries to execute scripts in the classpath prefixed with `cassandra-schema-cql3`. Defaults to true
-    * `ZIPKIN_STORAGE_CASSANDRA_USERNAME` and `ZIPKIN_STORAGE_CASSANDRA_PASSWORD`: Cassandra authentication. Will throw an exception on startup if authentication fails. No default
-    * `ZIPKIN_STORAGE_CASSANDRA_USE_SSL`: Requires `javax.net.ssl.trustStore` and `javax.net.ssl.trustStorePassword`, defaults to false.
+    * `ZIPKIN_STORAGE_CASSANDRA_KEYSPACE` or `CASSANDRA_KEYSPACE`: The keyspace to use. Defaults to "zipkin"
+    * `ZIPKIN_STORAGE_CASSANDRA_CONTACT_POINTS` or `CASSANDRA_CONTACT_POINTS`: Comma separated list of host addresses part of Cassandra cluster. You can also specify a custom port with 'host:port'. Defaults to localhost on port 9042.
+    * `ZIPKIN_STORAGE_CASSANDRA_LOCAL_DC` or `CASSANDRA_LOCAL_DC`: Name of the datacenter that will be considered "local" for load balancing. Defaults to "datacenter1"
+    * `ZIPKIN_STORAGE_CASSANDRA_ENSURE_SCHEMA` or `CASSANDRA_ENSURE_SCHEMA`: Ensuring cassandra has the latest schema. If enabled tries to execute scripts in the classpath prefixed with `cassandra-schema-cql3`. Defaults to true
+    * (`ZIPKIN_STORAGE_CASSANDRA_USERNAME` or `CASSANDRA_USERNAME`) and (`ZIPKIN_STORAGE_CASSANDRA_PASSWORD` or `CASSANDRA_PASSWORD`): Cassandra authentication. Will throw an exception on startup if authentication fails. No default
+    * `ZIPKIN_STORAGE_CASSANDRA_USE_SSL` or `CASSANDRA_USE_SSL`: Requires `javax.net.ssl.trustStore` and `javax.net.ssl.trustStorePassword`, defaults to false.
 
 The following are tuning parameters which may not concern all users:
 
@@ -255,16 +255,16 @@ Zipkin's Elasticsearch storage component supports Elasticsearch versions 6-8.x, 
 
 The following apply when `ZIPKIN_STORAGE` is set to `elasticsearch`:
 
-    * `ZIPKIN_STORAGE_ES_CLUSTER_NODES`: A comma separated list of elasticsearch base nodes to connect to ex. host:9200.
+    * `ZIPKIN_STORAGE_ES_CLUSTER_NODES` or `ES_HOSTS`: A comma separated list of elasticsearch base nodes to connect to ex. host:9200.
                   Defaults to "localhost:9200".
     * `ZIPKIN_STORAGE_ES_HTTP_PROTOCOL`: The protocol used when connecting to an Elasticsearch cluster. Defaults to "http".
     * `ZIPKIN_NAMESPACE`: All namespaces of Index are distinguished from other indexes by prefixes. Defaults to "zipkin".
-    * `ZIPKIN_STORAGE_ES_CONNECT_TIMEOUT`: Connect timeout of ElasticSearch client. Defaults to 3000 (3 seconds)
-    * `ZIPKIN_STORAGE_ES_SOCKET_TIMEOUT`: Socket timeout of ElasticSearch client. Defaults to 30000 (30 seconds)
+    * `ZIPKIN_STORAGE_ES_CONNECT_TIMEOUT` or `ES_TIMEOUT`: Connect timeout of ElasticSearch client. Defaults to 3000 (3 seconds)
+    * `ZIPKIN_STORAGE_ES_SOCKET_TIMEOUT` or `ES_TIMEOUT`: Socket timeout of ElasticSearch client. Defaults to 30000 (30 seconds)
     * `ZIPKIN_STORAGE_ES_RESPONSE_TIMEOUT`: the response timeout of ElasticSearch client (Armeria under the hood), set to 0 to disable response. Defaults to 15000 (15 seconds)
     * `ZIPKIN_STORAGE_ES_NUM_HTTP_CLIENT_THREAD`: The number of threads for the underlying HTTP client to perform socket I/O.
                                                   If the value is <= 0, the number of available processors will be used. Defaults to 0.
-    * `ZIPKIN_ES_USER` and `ZIPKIN_ES_PASSWORD`: Elasticsearch basic authentication, which defaults to empty string.
+    * (`ZIPKIN_ES_USER` or `ES_USERNAME`) and (`ZIPKIN_ES_PASSWORD` or `ES_PASSWORD`): Elasticsearch basic authentication, which defaults to empty string.
                                                  Use when X-Pack security (formerly Shield) is in place.
     * `ZIPKIN_STORAGE_ES_SSL_JKS_PATH`: The path to the Java keystore file containing an Elasticsearch SSL certificate for use with HTTPS. Defaults to "".
     * `ZIPKIN_STORAGE_ES_SSL_JKS_PASS`: The password for the Java keystore file containing an Elasticsearch SSL certificate for use with HTTPS. Defaults to "".
@@ -463,10 +463,10 @@ $ ZIPKIN_STORAGE=banyandb java -jar zipkin.jar
 ### MySQL/PostgreSQL Storage
 Zipkin's MySQL/PostgreSQL component is tested against MySQL 5.7, PostgreSQL 9 and applies when `ZIPKIN_STORAGE` is set to `mysql`/`postgresql`:
 
-    * `ZIPKIN_JDBC_URL`: The connection string to MySQL, ex. `jdbc:mysql://host/dbname`. 
+    * `ZIPKIN_JDBC_URL` or `MYSQL_JDBC_URL`: The connection string to MySQL, ex. `jdbc:mysql://host/dbname`. 
                          Defaults to `jdbc:mysql://localhost:3306/zipkin?rewriteBatchedStatements=true&allowMultiQueries=true` when using mysql 
                          and `jdbc:postgresql://localhost:5432/zipkin` when using postgresql.
-    * `ZIPKIN_DATA_SOURCE_USER` and `ZIPKIN_DATA_SOURCE_PASSWORD`: MySQL authentication, which defaults to `zipkin` and `zipkin`.
+    * (`ZIPKIN_DATA_SOURCE_USER` or `MYSQL_USER`) and (`ZIPKIN_DATA_SOURCE_PASSWORD` or `MYSQL_PASS`): MySQL authentication, which defaults to `zipkin` and `zipkin`.
     * `ZIPKIN_DATA_SOURCE_CACHE_PREP_STMTS`: Whether prepared statements should be cached or not. Defaults to `true`.
     * `ZIPKIN_DATA_SOURCE_PREP_STMT_CACHE_SQL_SIZE`: The number of prepared statements that the driver will cache per connection. Defaults to 250.
     * `ZIPKIN_DATA_SOURCE_PREP_STMT_CACHE_SQL_LIMIT`: The number of queries that can be cached in an LRU cache, to limit the memory cost of caching prepared statements. Defaults to 2048.
@@ -499,8 +499,8 @@ technology.
 
 Environment Variable | Default | Description
 --- | --- | ---
-`ZIPKIN_COLLECTOR_PORT` | `9410` | The port to listen for thrift RPC scribe requests.
-`ZIPKIN_SCRIBE_CATEGORY` | `zipkin` | Category zipkin spans will be consumed from.
+`ZIPKIN_COLLECTOR_PORT` or `COLLECTOR_PORT`| `9410` | The port to listen for thrift RPC scribe requests.
+`ZIPKIN_SCRIBE_CATEGORY` or `SCRIBE_CATEGORY`| `zipkin` | Category zipkin spans will be consumed from.
 
 
 ### ActiveMQ Collector
@@ -509,12 +509,12 @@ The ActiveMQ Collector is enabled when `ZIPKIN_RECEIVER_ZIPKIN_ACTIVEMQ` is set 
 Environment Variable | Default | Description
 --- | --- | ---
 `ZIPKIN_RECEIVER_ZIPKIN_ACTIVEMQ` | `-` | `default` enable the ActiveMQ collector.
-`ZIPKIN_ACTIVEMQ_URL` | `` | [Connection URL](https://activemq.apache.org/uri-protocols) to the ActiveMQ broker, ex. `tcp://localhost:61616` or `failover:(tcp://localhost:61616,tcp://remotehost:61616)`
-`ZIPKIN_ACTIVEMQ_QUEUE` | `zipkin` | Queue from which to collect span messages.
+`ZIPKIN_ACTIVEMQ_URL` or `ACTIVEMQ_URL`| `` | [Connection URL](https://activemq.apache.org/uri-protocols) to the ActiveMQ broker, ex. `tcp://localhost:61616` or `failover:(tcp://localhost:61616,tcp://remotehost:61616)`
+`ZIPKIN_ACTIVEMQ_QUEUE` or `ACTIVEMQ_QUEUE`| `zipkin` | Queue from which to collect span messages.
 `ZIPKIN_ACTIVEMQ_CLIENT_ID_PREFIX` | `zipkin` | Client ID prefix for queue consumers. Defaults to `zipkin`
-`ZIPKIN_ACTIVEMQ_CONCURRENCY` | `1` | Number of concurrent span consumers.
-`ZIPKIN_ACTIVEMQ_USERNAME` | `` | Optional username to connect to the broker
-`ZIPKIN_ACTIVEMQ_PASSWORD`| `` | Optional password to connect to the broker
+`ZIPKIN_ACTIVEMQ_CONCURRENCY` or `ACTIVEMQ_CONCURRENCY` | `1` | Number of concurrent span consumers.
+`ZIPKIN_ACTIVEMQ_USERNAME` or `ACTIVEMQ_USERNAME`| `` | Optional username to connect to the broker
+`ZIPKIN_ACTIVEMQ_PASSWORD` or `ACTIVEMQ_PASSWORD`| `` | Optional password to connect to the broker
 
 Example usage:
 
@@ -593,15 +593,15 @@ The RabbitMQ collector will be enabled when the `ZIPKIN_RECEIVER_ZIPKIN_RABBITMQ
 Environment Variable | Default | Description
 --- | --- | ---
 `ZIPKIN_RECEIVER_ZIPKIN_RABBITMQ` | `-` | `default` enable the RabbitMQ collector.
-`ZIPKIN_RECEIVER_RABBIT_ADDRESSES` | `` | Comma-separated list of addresses to which the client will connect.
-`ZIPKIN_RECEIVER_RABBIT_CONCURRENCY` | `1` | Number of concurrent consumers.
-`ZIPKIN_RECEIVER_RABBIT_CONNECTION_TIMEOUT` | `60000` | TCP connection timeout in milliseconds.
-`ZIPKIN_RECEIVER_RABBIT_USER` | `guest` | Username to use when authenticating to the server.
-`ZIPKIN_RECEIVER_RABBIT_PASSWORD` | `guest` | Password to use when authenticating to the server.
-`ZIPKIN_RECEIVER_RABBIT_QUEUE` | `zipkin` | Name of the queue to listen for spans.
+`ZIPKIN_RECEIVER_RABBIT_ADDRESSES` or `RABBIT_ADDRESSES`| `` | Comma-separated list of addresses to which the client will connect.
+`ZIPKIN_RECEIVER_RABBIT_CONCURRENCY` or `RABBIT_CONCURRENCY`| `1` | Number of concurrent consumers.
+`ZIPKIN_RECEIVER_RABBIT_CONNECTION_TIMEOUT` or `RABBIT_CONNECTION_TIMEOUT`| `60000` | TCP connection timeout in milliseconds.
+`ZIPKIN_RECEIVER_RABBIT_USER` or `RABBIT_USER`| `guest` | Username to use when authenticating to the server.
+`ZIPKIN_RECEIVER_RABBIT_PASSWORD` or `RABBIT_PASSWORD`| `guest` | Password to use when authenticating to the server.
+`ZIPKIN_RECEIVER_RABBIT_QUEUE` or `RABBIT_QUEUE`| `zipkin` | Name of the queue to listen for spans.
 `ZIPKIN_RECEIVER_RABBIT_VIRTUAL_HOST` | `/` | Virtual host to use when connecting to the RabbitMQ.
-`ZIPKIN_RECEIVER_RABBIT_USE_SSL` | `false` | Whether to use SSL when connecting.
-`ZIPKIN_RECEIVER_RABBIT_URI` | `` | The RabbitMQ URI to connect to. When set, it overrides all other RabbitMQ connection properties.
+`ZIPKIN_RECEIVER_RABBIT_USE_SSL` or `RABBIT_USE_SSL`| `false` | Whether to use SSL when connecting.
+`ZIPKIN_RECEIVER_RABBIT_URI` or `RABBIT_URI`| `` | The RabbitMQ URI to connect to. When set, it overrides all other RabbitMQ connection properties.
 
 Example usage:
 
