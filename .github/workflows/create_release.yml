@@ -16,4 +16,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Create Release
-        run: build-bin/maven/maven_release $(echo ${GITHUB_REF} | cut -d/ -f 3)
+        run: build-bin/maven/maven_release $(echo ${GITHUB_REF} | cut -d/ -f 3) zipkin-v3-test
