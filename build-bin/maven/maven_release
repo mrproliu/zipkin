@@ -27,10 +27,13 @@ trigger_tag=${1?trigger_tag is required. Ex release-1.2.3}
 release_version=$(build-bin/git/version_from_trigger_tag release- ${trigger_tag})
 
 # Checkout the branch that triggered this build
-git fetch --tags origin
+git fetch origin
 commit_sha=$(git rev-parse "$trigger_tag")
+echo "current sha: $commit_sha"
 branches=$(git branch --contains "$commit_sha")
+echo "branches: $branches"
 branch_name=$(echo "$branches" | head -n 1 | awk '{print $2}')
+echo "current branch: branch_name"
 if [ -z "$branch_name" ]; then
   default_branch="master"
   echo "Unable to determine a valid branch. Auto-selecting the default branch: $default_branch"
