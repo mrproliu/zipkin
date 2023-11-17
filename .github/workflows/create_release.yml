@@ -16,6 +16,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Create Release
-        run: |  # GITHUB_REF will be refs/tags/release-MAJOR.MINOR.PATCH
-#          build-bin/git/login_git &&
-          build-bin/maven/maven_release $(echo ${GITHUB_REF} | cut -d/ -f 3)
+        run: build-bin/maven/maven_release $(echo ${GITHUB_REF} | cut -d/ -f 3)
